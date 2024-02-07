@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
@@ -30,41 +30,47 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
+  void _updateMathString(String number) {
     setState(() {
-      _counter++;
+      mathString += number;
     });
   }
+
+  String mathString = "";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         title: Text('Calculator'),
       ),
       body: Center(
-        child: Wrap(
-          children: <Widget>[
-            CalculatorButton(number: "1"),
-            CalculatorButton(number: "2"),
-            CalculatorButton(number: "3"),
-            CalculatorButton(number: "4"),
-            CalculatorButton(number: "5"),
-            CalculatorButton(number: "6"),
-            CalculatorButton(number: "7"),
-            CalculatorButton(number: "8"),
-            CalculatorButton(number: "9"),
-            CalculatorButton(number: "10"),
+        child: Column(
+          children: [
+            Wrap(
+              children: <Widget>[
+                Container(
+                  alignment: Alignment.centerRight,
+                  child: Text(mathString),
+                ),
+                Divider(
+                  height: 50,
+                ),
+                CalculatorButton(number: "1", onPressed: _updateMathString),
+                CalculatorButton(number: "2", onPressed: _updateMathString),
+                CalculatorButton(number: "3", onPressed: _updateMathString),
+                CalculatorButton(number: "4", onPressed: _updateMathString),
+                CalculatorButton(number: "5", onPressed: _updateMathString),
+                CalculatorButton(number: "6", onPressed: _updateMathString),
+                CalculatorButton(number: "7", onPressed: _updateMathString),
+                CalculatorButton(number: "8", onPressed: _updateMathString),
+                CalculatorButton(number: "9", onPressed: _updateMathString),
+                CalculatorButton(number: "10", onPressed: _updateMathString),
+              ],
+            ),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
     ;
@@ -75,9 +81,11 @@ class CalculatorButton extends StatelessWidget {
   const CalculatorButton({
     super.key,
     required this.number,
+    required this.onPressed,
   });
 
   final String number;
+  final Function(String) onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -86,10 +94,12 @@ class CalculatorButton extends StatelessWidget {
         height: 100,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: Theme.of(context).colorScheme.primary,
+          color: Theme.of(context).colorScheme.onPrimaryContainer,
         ),
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            onPressed(number);
+          },
           child: Text("$number"),
         ));
   }
