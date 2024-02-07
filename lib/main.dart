@@ -1,160 +1,125 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
+class Product {
+  const Product({required this.name});
+
+  final String name;
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+typedef CartChangedCallback = Function(Product product, bool inCart);
 
-  // This widget is the root of your application.
+class ShoppingListItem extends StatelessWidget {
+  ShoppingListItem({
+    required this.product,
+    required this.inCart,
+    required this.onCartChanged,
+  }) : super(key: ObjectKey(product));
+
+  final Product product;
+  final bool inCart;
+  final CartChangedCallback onCartChanged;
+
+  Color _getColor(BuildContext context) {
+    // The theme depends on the BuildContext because different
+    // parts of the tree can have different themes.
+    // The BuildContext indicates where the build is
+    // taking place and therefore which theme to use.
+
+    return inCart //
+        ? Colors.black54
+        : Theme.of(context).primaryColor;
+  }
+
+  TextStyle? _getTextStyle(BuildContext context) {
+    if (!inCart) return null;
+
+    return const TextStyle(
+      color: Colors.black54,
+      decoration: TextDecoration.lineThrough,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-        useMaterial3: true,
+    return ListTile(
+      onTap: () {
+        onCartChanged(product, inCart);
+      },
+      leading: CircleAvatar(
+        backgroundColor: _getColor(context),
+        child: Text(product.name[0]),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      title: Text(
+        product.name,
+        style: _getTextStyle(context),
+      ),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class ShoppingList extends StatefulWidget {
+  const ShoppingList({required this.products, super.key});
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
+  final List<Product> products;
 
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+  // The framework calls createState the first time
+  // a widget appears at a given location in the tree.
+  // If the parent rebuilds and uses the same type of
+  // widget (with the same key), the framework re-uses
+  // the State object instead of creating a new State object.
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<ShoppingList> createState() => _ShoppingListState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _ShoppingListState extends State<ShoppingList> {
+  final _shoppingCart = <Product>{};
 
-  void _incrementCounter() {
+  void _handleCartChanged(Product product, bool inCart) {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      // When a user changes what's in the cart, you need
+      // to change _shoppingCart inside a setState call to
+      // trigger a rebuild.
+      // The framework then calls build, below,
+      // which updates the visual appearance of the app.
+
+      if (!inCart) {
+        _shoppingCart.add(product);
+      } else {
+        _shoppingCart.remove(product);
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        leading: const IconButton(
-          icon: Icon(Icons.menu),
-          tooltip: 'Navigation menu',
-          onPressed: null,
-        ),
-        title: const Text('Example title'),
-        actions: const [
-          IconButton(
-            icon: Icon(Icons.search),
-            tooltip: 'Search',
-            onPressed: null,
-          ),
-        ],
+        title: const Text('Shopping List'),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[MyButton()],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.biotech_rounded),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
-  }
-}
-
-// class MyButton extends StatelessWidget {
-//   const MyButton({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return GestureDetector(
-//       onTap: () {
-//         print('MyButton was tapped!');
-//       },
-//       child: Container(
-//         height: 50,
-//         padding: const EdgeInsets.all(8),
-//         margin: const EdgeInsets.symmetric(horizontal: 8),
-//         decoration: BoxDecoration(
-//           borderRadius: BorderRadius.circular(500),
-//           color: Colors.lightGreen,
-//         ),
-//         child: const Center(
-//           child: Text('Engage'),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-class _MyButtonState extends State<MyButton> {
-  // State variables items here
-  var _counter = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(60.0),
-      child: Center(
-        child: ElevatedButton(
-            onPressed: () {
-                setState(() {
-                    _counter++;
-                });
-            },
-          child: Text('Press Me: $_counter'),
-        ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        children: widget.products.map((product) {
+          return ShoppingListItem(
+            product: product,
+            inCart: _shoppingCart.contains(product),
+            onCartChanged: _handleCartChanged,
+          );
+        }).toList(),
       ),
     );
   }
 }
 
-class MyButton extends StatefulWidget {
-  @override
-  State<MyButton> createState() => _MyButtonState();
+void main() {
+  runApp(const MaterialApp(
+    title: 'Shopping App',
+    home: ShoppingList(
+      products: [
+        Product(name: 'Eggs'),
+        Product(name: 'Flour'),
+        Product(name: 'Chocolate chips'),
+      ],
+    ),
+  ));
 }
