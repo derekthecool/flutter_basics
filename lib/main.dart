@@ -46,10 +46,18 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text('Calculator'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Wrap(
           children: <Widget>[
-            Text("Test text"),
+            CalculatorButton(number: "1"),
+            CalculatorButton(number: "2"),
+            CalculatorButton(number: "3"),
+            CalculatorButton(number: "4"),
+            CalculatorButton(number: "5"),
+            CalculatorButton(number: "6"),
+            CalculatorButton(number: "7"),
+            CalculatorButton(number: "8"),
+            CalculatorButton(number: "9"),
+            CalculatorButton(number: "10"),
           ],
         ),
       ),
@@ -60,5 +68,29 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
     ;
+  }
+}
+
+class CalculatorButton extends StatelessWidget {
+  const CalculatorButton({
+    super.key,
+    required this.number,
+  });
+
+  final String number;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        width: 100,
+        height: 100,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+        child: ElevatedButton(
+          onPressed: () {},
+          child: Text("$number"),
+        ));
   }
 }
