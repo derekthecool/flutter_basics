@@ -52,7 +52,12 @@ class _MyHomePageState extends State<MyHomePage> {
               children: <Widget>[
                 Container(
                   alignment: Alignment.centerRight,
-                  child: Text(mathString),
+                  child: Text(
+                    mathString,
+                    style: TextStyle(
+                      fontSize: 25,
+                    ),
+                  ),
                 ),
                 Divider(
                   height: 50,
