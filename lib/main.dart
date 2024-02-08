@@ -11,10 +11,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        colorSchemeSeed: Colors.grey,
+      ),
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.black),
+        colorSchemeSeed: Colors.grey,
         useMaterial3: true,
       ),
+      themeMode: ThemeMode.dark,
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -56,6 +61,25 @@ class _MyHomePageState extends State<MyHomePage> {
                     mathString,
                     style: TextStyle(
                       fontSize: 25,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Container(
+                    child: Container(
+                      alignment: Alignment.centerRight,
+                      child: Row(
+                        children: [
+                          Row(
+                            children: <Widget>[
+                              Icon(Icons.history, size: 30),
+                              Icon(Icons.medical_services_rounded, size: 30),
+                              Icon(Icons.calculate_outlined, size: 30),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
