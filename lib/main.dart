@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'dart:convert';
 
-Future<void> fetchAndDecodeJson(String inputURL) async {
+Future<String> fetchAndDecodeJson(String inputURL) async {
   final url = Uri.parse(inputURL);
 
   try {
@@ -24,16 +24,22 @@ Future<void> fetchAndDecodeJson(String inputURL) async {
 
       // Use the decoded data
       print(data);
+      var joke = data["value"];
+      print(joke);
+      return joke;
     } else {
       // Handling error, if the server does not return a status code of 200
       print('Failed to load data. Status code: ${response.statusCode}');
+      return "Failed to load";
     }
 
     // Closing the HttpClient to free system resources
     httpClient.close();
   } catch (e) {
     // Handling any errors that occur during the request
-    print('Error: $e');
+    var error = 'Error: $e';
+    print(error);
+    return error;
   }
 }
 
@@ -66,6 +72,18 @@ class MyApp extends StatelessWidget {
 class _ChuckViewState extends State<ChuckView> {
   // State variables items here
 
+  // fetchAndDecodeJson('https://api.chucknorris.io/jokes/random')
+  var jokeList = [];
+
+  Future<void> GetJoke() async {
+    print('Getting new Chuck Norris joke');
+    var joke =
+        await fetchAndDecodeJson('https://api.chucknorris.io/jokes/random');
+    setState(() {
+      jokeList.add(joke);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,16 +91,66 @@ class _ChuckViewState extends State<ChuckView> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text('Chuck Norris Jokes'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[],
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          // Flexible(
+          //   // Add this
+          //   child: ListView.builder(
+          //       padding: const EdgeInsets.all(8),
+          //       itemCount: jokeList.length,
+          //       itemBuilder: (BuildContext context, int index) {
+          //         return Center(
+          //             child: Text(
+          //           '“${jokeList[index]}”',
+          //           style: TextStyle(fontSize: 22, fontStyle: FontStyle.italic),
+          //         ));
+          //       }),
+          // ),
+
+          Flexible(
+            // Add this
+            child: GridView.builder(
+                padding: const EdgeInsets.all(8),
+                itemCount: jokeList.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 6, // Number of columns
+                  crossAxisSpacing: 10, // Horizontal space between items
+                  mainAxisSpacing: 10, // Vertical space between items
+                ),
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        color: Theme.of(context).colorScheme.inversePrimary,
+                      ),
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            '“${jokeList[index]}”',
+                            style: TextStyle(
+                                fontSize: 22, fontStyle: FontStyle.italic),
+                          ),
+                        ),
+                      ));
+                }),
+          ),
+
+          // Container(
+          //   height: 150,
+          //   width: 150,
+          //   child: ListTile(
+          //     leading: Icon(Icons.spa),
+          //     // trailing: Text(jokeList.firstOrNull),
+          //     trailing: Text("tester"),
+          //   ),
+          // ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          print('Getting new Chuck Norris joke');
-          fetchAndDecodeJson('https://api.chucknorris.io/jokes/random');
+        onPressed: () async {
+          GetJoke();
         },
         tooltip: 'Get new joke',
         child: const Icon(Icons.add),
