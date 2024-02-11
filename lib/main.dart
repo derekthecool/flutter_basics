@@ -86,6 +86,21 @@ class _ChuckViewState extends State<ChuckView> {
 
   @override
   Widget build(BuildContext context) {
+    var media = MediaQuery.of(context);
+    print('test start');
+    print(media);
+    print('test end');
+
+    final width = media.size.width;
+
+    // final jokeColumns = if(width  < 200) { 1 } else{ 2 };
+    int jokeColumns = 1;
+    if (width > 400  && width < 768) {
+      jokeColumns = 3;
+    } else if (width > 768) {
+      jokeColumns = 6;
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -114,7 +129,7 @@ class _ChuckViewState extends State<ChuckView> {
                 padding: const EdgeInsets.all(8),
                 itemCount: jokeList.length,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 6, // Number of columns
+                  crossAxisCount: jokeColumns, // Number of columns
                   crossAxisSpacing: 10, // Horizontal space between items
                   mainAxisSpacing: 10, // Vertical space between items
                 ),
@@ -122,7 +137,23 @@ class _ChuckViewState extends State<ChuckView> {
                   return Container(
                       decoration: BoxDecoration(
                         shape: BoxShape.rectangle,
-                        color: Theme.of(context).colorScheme.inversePrimary,
+                        // color: Theme.of(context).colorScheme.inversePrimary,
+
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment(0.8, 1),
+                          colors: <Color>[
+                            Color(0x001f005c),
+                            Color(0x005b0060),
+                            Color(0xff870160),
+                            Color(0xffac255e),
+                            Color(0xffca485c),
+                            Color(0xffe16b5c),
+                            Color(0xfff39060),
+                            Color(0xffffb56b),
+                          ], // Gradient from https://learnui.design/tools/gradient-generator.html
+                          tileMode: TileMode.mirror,
+                        ),
                       ),
                       child: Center(
                         child: Padding(
